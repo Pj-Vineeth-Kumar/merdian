@@ -1,22 +1,25 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ChevronDown, GripVertical, Lightbulb, MapPin, Trash2 } from "lucide-react";
+import { ChevronDown, ExternalLink, GripVertical, Lightbulb, MapPin, Trash2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useId, useState } from "react";
 
 import type { Stop } from "@shared/types";
 
 import { IconButton } from "@/components/ui/icon-button";
+import { googleMapsUrl } from "@/lib/maps";
 import { cn, formatDuration } from "@/lib/utils";
 
 import { categoryMeta, timeOfDayIcon } from "./category-icon";
 
 interface StopCardProps {
   stop: Stop;
+  /** Destination name, used to disambiguate the place on Google Maps. */
+  destination: string;
   onRemove: () => void;
 }
 
-export function StopCard({ stop, onRemove }: StopCardProps) {
+export function StopCard({ stop, destination, onRemove }: StopCardProps) {
   const [expanded, setExpanded] = useState(false);
   const detailsId = useId();
   const reduceMotion = useReducedMotion();
@@ -30,6 +33,7 @@ export function StopCard({ stop, onRemove }: StopCardProps) {
   const TimeIcon = stop.timeOfDay ? timeOfDayIcon(stop.timeOfDay) : null;
   const duration = formatDuration(stop.durationMinutes);
   const hasDetails = Boolean(stop.description || stop.tip || stop.location || stop.cost);
+  const mapsHref = googleMapsUrl(stop.name, stop.location ?? destination);
 
   return (
     <li
@@ -86,7 +90,18 @@ export function StopCard({ stop, onRemove }: StopCardProps) {
           )}
         </button>
 
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center gap-0.5 pr-1.5">
+          <a
+            href={mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${stop.name} in Google Maps`}
+            title="Open in Google Maps"
+            onClick={(event) => event.stopPropagation()}
+            className="grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <MapPin className="size-[18px]" aria-hidden />
+          </a>
           <IconButton label={`Remove ${stop.name}`} onClick={onRemove} className="size-8 text-muted-foreground hover:text-destructive">
             <Trash2 />
           </IconButton>
@@ -117,6 +132,15 @@ export function StopCard({ stop, onRemove }: StopCardProps) {
                   <span className="text-pretty">{stop.tip}</span>
                 </p>
               )}
+              <a
+                href={mapsHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-fit items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <ExternalLink className="size-3.5" aria-hidden />
+                Open in Google Maps
+              </a>
             </div>
           </motion.div>
         )}

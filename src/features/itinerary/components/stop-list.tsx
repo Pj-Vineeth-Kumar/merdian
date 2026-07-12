@@ -20,6 +20,7 @@ import { StopCard } from "./stop-card";
 
 interface StopListProps {
   stops: Stop[];
+  destination: string;
   onReorder: (activeId: string, overId: string) => void;
   onRemoveStop: (stopId: string) => void;
 }
@@ -29,7 +30,7 @@ interface StopListProps {
  * KeyboardSensor makes reordering fully operable without a mouse; TouchSensor
  * with a short press-delay keeps it working on phones without hijacking scroll.
  */
-export function StopList({ stops, onReorder, onRemoveStop }: StopListProps) {
+export function StopList({ stops, destination, onReorder, onRemoveStop }: StopListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 8 } }),
@@ -47,7 +48,12 @@ export function StopList({ stops, onReorder, onRemoveStop }: StopListProps) {
       <SortableContext items={stops.map((stop) => stop.id)} strategy={verticalListSortingStrategy}>
         <ul className="flex flex-col gap-2.5">
           {stops.map((stop) => (
-            <StopCard key={stop.id} stop={stop} onRemove={() => onRemoveStop(stop.id)} />
+            <StopCard
+              key={stop.id}
+              stop={stop}
+              destination={destination}
+              onRemove={() => onRemoveStop(stop.id)}
+            />
           ))}
         </ul>
       </SortableContext>

@@ -47,6 +47,7 @@ export function ItineraryView({ itinerary: initial, meta, onChange, onReset }: I
               key={day.id}
               day={day}
               index={index}
+              destination={itinerary.destination}
               onReorder={(activeId, overId) => actions.reorderStops(day.id, activeId, overId)}
               onRemoveStop={(stopId) => actions.removeStop(day.id, stopId)}
               onRemoveDay={() => actions.removeDay(day.id)}

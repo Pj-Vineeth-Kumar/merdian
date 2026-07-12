@@ -10,12 +10,20 @@ import { StopList } from "./stop-list";
 interface DaySectionProps {
   day: Day;
   index: number;
+  destination: string;
   onReorder: (activeId: string, overId: string) => void;
   onRemoveStop: (stopId: string) => void;
   onRemoveDay: () => void;
 }
 
-export function DaySection({ day, index, onReorder, onRemoveStop, onRemoveDay }: DaySectionProps) {
+export function DaySection({
+  day,
+  index,
+  destination,
+  onReorder,
+  onRemoveStop,
+  onRemoveDay,
+}: DaySectionProps) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -52,7 +60,12 @@ export function DaySection({ day, index, onReorder, onRemoveStop, onRemoveDay }:
       )}
 
       {day.stops.length > 0 ? (
-        <StopList stops={day.stops} onReorder={onReorder} onRemoveStop={onRemoveStop} />
+        <StopList
+          stops={day.stops}
+          destination={destination}
+          onReorder={onReorder}
+          onRemoveStop={onRemoveStop}
+        />
       ) : (
         <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
           No stops left on this day. Remove the day, or generate a new plan.
