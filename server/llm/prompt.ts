@@ -38,6 +38,20 @@ Rules:
 - If the request is vague, make reasonable, popular choices rather than refusing.
 - Output valid JSON only. Do not wrap it in code fences.`;
 
-export function buildUserPrompt(prompt: string): string {
-  return `Trip request:\n"""\n${prompt}\n"""`;
+interface PromptContext {
+  /** When set, the plan must span exactly this many days. */
+  days?: number;
+  /** Human-readable travel window, e.g. "Tue, May 6 to Sun, May 11". */
+  window?: string;
+}
+
+export function buildUserPrompt(prompt: string, context: PromptContext = {}): string {
+  const lines = [`Trip request:\n"""\n${prompt}\n"""`];
+  if (context.days) {
+    lines.push(`Plan EXACTLY ${context.days} day(s), one entry in "days" per calendar day.`);
+  }
+  if (context.window) {
+    lines.push(`The trip runs ${context.window}. Tailor choices to that season and weekday/weekend mix.`);
+  }
+  return lines.join("\n\n");
 }

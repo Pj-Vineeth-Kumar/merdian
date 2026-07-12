@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { z } from "zod";
 
 import { STORAGE_KEYS } from "@shared/constants";
-import { generateMetaSchema } from "@shared/schemas/api";
+import { dateRangeSchema, generateMetaSchema } from "@shared/schemas/api";
 import { itinerarySchema } from "@shared/schemas/itinerary";
 
 import { useLocalStorage } from "@/hooks/use-local-storage";
@@ -13,6 +13,7 @@ const sessionSchema = z.object({
   prompt: z.string(),
   itinerary: itinerarySchema,
   meta: generateMetaSchema,
+  dateRange: dateRangeSchema.nullish(),
   savedAt: z.number(),
 });
 

@@ -40,6 +40,7 @@ function reducer(_state: ItineraryState, action: Action): ItineraryState {
 interface Variables {
   prompt: string;
   fault: GenerateOptions["fault"];
+  dateRange: GenerateOptions["dateRange"];
   signal: AbortSignal;
 }
 
@@ -83,7 +84,8 @@ export function useItinerary(initialSession: TripSession | null): ItineraryContr
   );
 
   const mutation = useMutation<GenerateResponse, unknown, Variables>({
-    mutationFn: ({ prompt, fault, signal }) => fetchItinerary(prompt, { signal, fault }),
+    mutationFn: ({ prompt, fault, dateRange, signal }) =>
+      fetchItinerary(prompt, { signal, fault, dateRange }),
     retry: (failureCount, error) => {
       if (!(error instanceof ApiError)) return false;
       const transient = error.code === "upstream_error" || error.code === "rate_limited";
@@ -112,7 +114,12 @@ export function useItinerary(initialSession: TripSession | null): ItineraryContr
       dispatch({ type: "loading", prompt: trimmed });
 
       mutation.mutate(
-        { prompt: trimmed, fault: options?.fault, signal: controller.signal },
+        {
+          prompt: trimmed,
+          fault: options?.fault,
+          dateRange: options?.dateRange ?? null,
+          signal: controller.signal,
+        },
         {
           onSuccess: (response) => {
             // (2) Drop the result unless this is still the latest request.

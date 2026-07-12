@@ -18,6 +18,7 @@ export type {
   GenerateMeta,
   ApiError,
   ApiErrorCode,
+  DateRange,
 } from "../schemas/api";
 
 export type { FaultMode } from "../constants";

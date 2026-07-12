@@ -1,5 +1,5 @@
 import type { FaultMode } from "@shared/constants";
-import type { GenerateMeta, Itinerary } from "@shared/types";
+import type { DateRange, GenerateMeta, Itinerary } from "@shared/types";
 
 import type { ApiError } from "@/lib/api-client";
 
@@ -8,6 +8,7 @@ export interface TripSession {
   prompt: string;
   itinerary: Itinerary;
   meta: GenerateMeta;
+  dateRange?: DateRange | null;
   savedAt: number;
 }
 
@@ -24,4 +25,5 @@ export type ItineraryState =
 
 export interface GenerateOptions {
   fault?: FaultMode;
+  dateRange?: DateRange | null;
 }

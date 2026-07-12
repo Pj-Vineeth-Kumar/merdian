@@ -29,6 +29,7 @@ generateRouter.post("/generate", faultInjection, async (req, res, next) => {
       prompt: parsed.data.prompt,
       signal: controller.signal,
       fault: req.faultMode,
+      dateRange: parsed.data.dateRange,
     });
     res.json(result);
   } catch (error) {

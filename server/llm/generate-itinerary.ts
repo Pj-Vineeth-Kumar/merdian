@@ -1,11 +1,12 @@
 import type { FaultMode } from "@shared/constants";
 import { LLM_TIMEOUT_MS, RETRY } from "@shared/constants";
-import type { GenerateResponse } from "@shared/schemas/api";
+import type { DateRange, GenerateResponse } from "@shared/schemas/api";
 import type { Itinerary, ModelItinerary } from "@shared/schemas/itinerary";
 import { itinerarySchema, modelItinerarySchema } from "@shared/schemas/itinerary";
 
 import { provider } from "../providers";
 
+import { dayLabel, rangeDayCount } from "./dates";
 import { LlmError, RETRYABLE_CODES } from "./errors";
 import { simulateFaultText } from "./faults";
 import { parseJsonLenient } from "./json-repair";
@@ -16,6 +17,8 @@ interface GenerateArgs {
   /** Aborted when the client disconnects. Linked to a per-attempt timeout. */
   signal: AbortSignal;
   fault?: FaultMode;
+  /** When present, the plan spans exactly these dates and each day is dated. */
+  dateRange?: DateRange | null;
 }
 
 /**
@@ -28,6 +31,7 @@ export async function generateItinerary({
   prompt,
   signal,
   fault,
+  dateRange,
 }: GenerateArgs): Promise<GenerateResponse> {
   const startedAt = performance.now();
 
@@ -37,12 +41,12 @@ export async function generateItinerary({
   if (fault) {
     rawText = await simulateFaultText(fault, prompt, signal);
   } else {
-    const result = await callProviderWithRetry(prompt, signal);
+    const result = await callProviderWithRetry(prompt, signal, dateRange);
     rawText = result.text;
     attempts = result.attempts;
   }
 
-  const itinerary = parseAndValidate(rawText);
+  const itinerary = parseAndValidate(rawText, dateRange);
 
   return {
     itinerary,
@@ -59,9 +63,10 @@ export async function generateItinerary({
 async function callProviderWithRetry(
   prompt: string,
   externalSignal: AbortSignal,
+  dateRange: DateRange | null | undefined,
 ): Promise<{ text: string; attempts: number }> {
   const system = SYSTEM_PROMPT;
-  const user = buildUserPrompt(prompt);
+  const user = buildUserPrompt(prompt, promptContext(dateRange));
   let lastError: LlmError | undefined;
 
   for (let attempt = 1; attempt <= RETRY.maxAttempts; attempt++) {
@@ -85,7 +90,7 @@ async function callProviderWithRetry(
 }
 
 /** Repair → parse → validate → assign ids. Turns bad output into typed errors. */
-function parseAndValidate(rawText: string): Itinerary {
+function parseAndValidate(rawText: string, dateRange: DateRange | null | undefined): Itinerary {
   let parsed: unknown;
   try {
     parsed = parseJsonLenient(rawText);
@@ -111,16 +116,18 @@ function parseAndValidate(rawText: string): Itinerary {
     );
   }
 
-  return finalize(result.data);
+  return finalize(result.data, dateRange);
 }
 
-/** Assign stable ids and derive dayNumber/durationDays from position. */
-function finalize(data: ModelItinerary): Itinerary {
+/** Assign stable ids, derive dayNumber, and (if a range was given) stamp dates. */
+function finalize(data: ModelItinerary, dateRange: DateRange | null | undefined): Itinerary {
   const days = data.days.map((day, index) => ({
     id: crypto.randomUUID(),
     dayNumber: index + 1,
     title: day.title || `Day ${index + 1}`,
-    date: day.date,
+    // When the user picked dates, the day's date is authoritative and overrides
+    // whatever the model produced, so the plan matches the calendar exactly.
+    date: dateRange ? dayLabel(dateRange, index) : day.date,
     stops: day.stops.map((stop) => ({ id: crypto.randomUUID(), ...stop })),
   }));
 
@@ -131,6 +138,16 @@ function finalize(data: ModelItinerary): Itinerary {
     durationDays: days.length,
     days,
   });
+}
+
+/** Build the prompt context (target day count + window label) from a date range. */
+function promptContext(dateRange: DateRange | null | undefined): {
+  days?: number;
+  window?: string;
+} {
+  if (!dateRange) return {};
+  const days = rangeDayCount(dateRange);
+  return { days, window: `${dayLabel(dateRange, 0)} to ${dayLabel(dateRange, days - 1)}` };
 }
 
 // ── small helpers ────────────────────────────────────────────────────────────

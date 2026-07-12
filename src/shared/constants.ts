@@ -19,6 +19,9 @@ export const TRIP_INPUT = {
   maxChars: 2_000,
 } as const;
 
+/** Upper bound on trip length (a date range longer than this is clamped). */
+export const MAX_TRIP_DAYS = 14;
+
 /** Client input debounce (ms) for the live character counter / draft persistence. */
 export const INPUT_DEBOUNCE_MS = 300;
 

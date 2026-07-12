@@ -4,6 +4,13 @@ import { FAULT_MODES, TRIP_INPUT } from "../constants";
 
 import { itinerarySchema } from "./itinerary";
 
+/** An inclusive travel window as calendar dates (YYYY-MM-DD, no timezone). */
+export const dateRangeSchema = z.object({
+  start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+export type DateRange = z.infer<typeof dateRangeSchema>;
+
 /** Request body the client sends to POST /api/generate. */
 export const generateRequestSchema = z.object({
   prompt: z
@@ -11,6 +18,8 @@ export const generateRequestSchema = z.object({
     .trim()
     .min(TRIP_INPUT.minChars, `Describe your trip in at least ${TRIP_INPUT.minChars} characters.`)
     .max(TRIP_INPUT.maxChars, `Keep it under ${TRIP_INPUT.maxChars} characters.`),
+  /** Optional. When present, the plan spans exactly these dates. */
+  dateRange: dateRangeSchema.nullish(),
 });
 export type GenerateRequest = z.infer<typeof generateRequestSchema>;
 

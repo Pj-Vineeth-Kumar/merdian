@@ -1,11 +1,12 @@
 import type { FaultMode } from "@shared/constants";
-import { generateResponseSchema, type GenerateResponse } from "@shared/schemas/api";
+import { generateResponseSchema, type DateRange, type GenerateResponse } from "@shared/schemas/api";
 
 import { ApiError, postJson } from "@/lib/api-client";
 
 interface FetchOptions {
   signal: AbortSignal;
   fault?: FaultMode;
+  dateRange?: DateRange | null;
 }
 
 /**
@@ -16,11 +17,11 @@ interface FetchOptions {
  */
 export async function fetchItinerary(
   prompt: string,
-  { signal, fault }: FetchOptions,
+  { signal, fault, dateRange }: FetchOptions,
 ): Promise<GenerateResponse> {
   const raw = await postJson<unknown>(
     "/api/generate",
-    { prompt },
+    { prompt, dateRange: dateRange ?? null },
     { signal, headers: fault ? { "x-fault": fault } : undefined },
   );
 
