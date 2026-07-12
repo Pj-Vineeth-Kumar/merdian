@@ -54,12 +54,19 @@ sent to the browser, and never logged. `grep`-ing the production bundle for it r
 ## What it does
 
 - **Free-form input** → the model returns JSON matching a strict schema → the app renders it.
+- **Optional date range**: pick travel dates in a dual-month calendar (with trip presets like "long
+  weekend" / "1 week"). The plan then spans exactly those dates and each day is stamped with its
+  real calendar date (Fri, Jul 17…).
+- **Rendered as a chat reply**: your request appears as a message and the plan as the assistant's
+  structured reply — interactive components, never raw model text.
+- **Every place links to Google Maps**: a pin on each stop (and an "Open in Google Maps" action when
+  expanded) opens the location in a new tab.
 - **Interactive itinerary**: expand a stop for its description, insider tip, location, and cost;
   **drag to reorder** stops within a day (pointer, touch, **and keyboard**); remove stops or whole days.
 - **Four explicit states** everywhere data is shown: idle, loading (shaped skeleton), error (with
   Retry), empty, success.
-- **Save / restore**: your plan and edits persist to `localStorage` and are restored on reload —
-  no second model call.
+- **Save / restore**: your plan, dates, and edits persist to `localStorage` and are restored on
+  reload — no second model call.
 - **Light / dark themes**, mobile-first responsive layout, keyboard-operable, reduced-motion aware.
 - **Failure demo**: a "Demo a failure" menu triggers each bad-output case on demand (see below).
 
@@ -152,9 +159,11 @@ One schema, one truth.
 - **@dnd-kit** for reordering — accessible pointer/touch/keyboard sensors out of the box.
 - **Motion** (framer-motion) for the staggered day reveal and expand/collapse, gated on
   `prefers-reduced-motion`.
-- **Design:** a self-hosted type system (Bricolage Grotesque / Hanken Grotesk / DM Mono), a single
-  locked marigold accent, cartographic contour background, and full light/dark parity via CSS
-  tokens.
+- **Design:** an image-forward, light-first dashboard — a sticky photographic hero that fades into
+  the page, a left icon rail, glass search bar, and popular-destination cards. Self-hosted type
+  system (Bricolage Grotesque / Hanken Grotesk / DM Mono), a single locked marigold accent, and full
+  light/dark parity via CSS tokens. (Hero and card imagery are Lorem Picsum placeholders; swap for
+  licensed photography in production.)
 
 ---
 
