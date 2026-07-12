@@ -66,9 +66,10 @@ const config: Config = {
         mono: ['"DM Mono"', "ui-monospace", "monospace"],
       },
       boxShadow: {
-        // Shadows are tinted to the warm charcoal background, never pure black.
-        card: "0 1px 0 0 hsl(var(--foreground) / 0.04), 0 14px 40px -22px hsl(20 40% 4% / 0.55)",
-        lift: "0 2px 0 0 hsl(var(--foreground) / 0.05), 0 26px 60px -28px hsl(20 40% 4% / 0.7)",
+        // Soft, warm-tinted shadows that read well on light surfaces (never pure black).
+        card: "0 1px 2px hsl(28 30% 20% / 0.05), 0 10px 26px -14px hsl(28 30% 20% / 0.14)",
+        lift: "0 2px 4px hsl(28 30% 20% / 0.06), 0 22px 48px -22px hsl(28 30% 20% / 0.24)",
+        rail: "0 8px 30px -12px hsl(28 30% 20% / 0.18)",
       },
       keyframes: {
         "fade-in-up": {

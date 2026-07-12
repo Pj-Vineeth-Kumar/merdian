@@ -3,36 +3,35 @@
 @tailwind utilities;
 
 /*
-  Theme: "Nocturnal Atlas" — a warm charcoal canvas with a single locked marigold
-  accent, cartographic contour "isolines" in the background, and an expedition
-  type system (Bricolage Grotesque display / Hanken Grotesk body / DM Mono for
-  coordinates, times, and durations). Category hues are a muted map legend, not a
-  second brand color. All color flows through these tokens (light + dark parity).
+  Theme: light, airy, image-forward travel dashboard. Soft near-white surfaces,
+  generous rounding, a single warm marigold accent, and a photographic hero that
+  fades into the page. Category hues are a muted map legend, not a second accent.
+  Dark mode is fully supported via the same tokens.
 */
 
 @layer base {
   :root {
-    --background: 40 36% 96%;
-    --foreground: 26 28% 14%;
+    --background: 38 30% 97%;
+    --foreground: 25 22% 15%;
 
-    --card: 40 44% 99%;
-    --card-foreground: 26 28% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 22% 15%;
 
-    --popover: 40 44% 99%;
-    --popover-foreground: 26 28% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 22% 15%;
 
-    --primary: 30 92% 44%;
-    --primary-foreground: 40 44% 98%;
+    --primary: 27 92% 51%;
+    --primary-foreground: 40 60% 99%;
 
-    --muted: 38 24% 90%;
-    --muted-foreground: 30 10% 40%;
+    --muted: 36 22% 93%;
+    --muted-foreground: 28 8% 44%;
 
-    --destructive: 6 68% 46%;
-    --destructive-foreground: 40 44% 98%;
+    --destructive: 6 70% 48%;
+    --destructive-foreground: 40 60% 99%;
 
-    --border: 34 20% 83%;
-    --input: 34 20% 80%;
-    --ring: 30 92% 44%;
+    --border: 34 18% 89%;
+    --input: 34 16% 86%;
+    --ring: 27 92% 51%;
 
     --cat-food: 14 62% 46%;
     --cat-sight: 200 58% 40%;
@@ -42,33 +41,33 @@
     --cat-shopping: 38 74% 40%;
     --cat-transport: 214 16% 42%;
     --cat-stay: 252 40% 52%;
-    --cat-other: 30 10% 42%;
+    --cat-other: 28 8% 44%;
 
-    --radius: 0.85rem;
+    --radius: 1.1rem;
   }
 
   .dark {
-    --background: 24 18% 7%;
-    --foreground: 36 30% 92%;
+    --background: 24 16% 8%;
+    --foreground: 36 28% 92%;
 
-    --card: 26 16% 10%;
-    --card-foreground: 36 30% 92%;
+    --card: 26 14% 11%;
+    --card-foreground: 36 28% 92%;
 
-    --popover: 26 18% 9%;
-    --popover-foreground: 36 30% 92%;
+    --popover: 26 16% 10%;
+    --popover-foreground: 36 28% 92%;
 
-    --primary: 38 94% 58%;
+    --primary: 30 94% 58%;
     --primary-foreground: 26 45% 10%;
 
-    --muted: 28 12% 16%;
-    --muted-foreground: 34 13% 64%;
+    --muted: 28 10% 17%;
+    --muted-foreground: 34 12% 64%;
 
     --destructive: 8 74% 60%;
     --destructive-foreground: 36 30% 96%;
 
-    --border: 30 12% 19%;
-    --input: 30 12% 17%;
-    --ring: 38 94% 58%;
+    --border: 30 10% 20%;
+    --input: 30 10% 18%;
+    --ring: 30 94% 58%;
 
     --cat-food: 16 66% 62%;
     --cat-sight: 199 56% 62%;
@@ -78,7 +77,7 @@
     --cat-shopping: 44 74% 62%;
     --cat-transport: 210 16% 66%;
     --cat-stay: 255 46% 72%;
-    --cat-other: 34 13% 64%;
+    --cat-other: 34 12% 64%;
   }
 
   * {
@@ -96,52 +95,40 @@
     font-feature-settings: "ss01", "cv01";
   }
 
-  /* Atmospheric background: warm horizon glow + cartographic contour isolines.
-     Fixed and non-interactive so it never affects scrolling performance. */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(
-        130% 90% at 85% -10%,
-        hsl(var(--primary) / 0.16),
-        transparent 55%
-      ),
-      radial-gradient(
-        90% 70% at 5% 105%,
-        hsl(210 40% 30% / 0.14),
-        transparent 60%
-      ),
-      repeating-radial-gradient(
-        circle at 82% 14%,
-        transparent 0 46px,
-        hsl(var(--foreground) / 0.022) 46px 47px
-      ),
-      repeating-radial-gradient(
-        circle at 12% 88%,
-        transparent 0 60px,
-        hsl(var(--foreground) / 0.018) 60px 61px
-      );
-  }
-
   ::selection {
-    background: hsl(var(--primary) / 0.28);
+    background: hsl(var(--primary) / 0.24);
   }
 
-  /* Consistent, visible focus everywhere. Never removed without replacement. */
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Thin, unobtrusive scrollbars that match the surface. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.35) transparent;
   }
 }
 
 @layer components {
-  /* The vertical "route rail" that threads through a day's stops, like a line on
-     a map. Rendered as a pseudo-element on the stop list. */
-  .route-rail {
-    position: relative;
+  /* Frosted panel used for the search bar and floating controls over imagery. */
+  .glass {
+    background: hsl(var(--card) / 0.72);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid hsl(var(--border) / 0.8);
+  }
+
+  /* Fades a photographic hero down into the page background so text stays legible.
+     A light overall veil keeps the (dark) hero copy readable over the photo. */
+  .hero-scrim {
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--background) / 0.12) 0%,
+      hsl(var(--background) / 0.5) 42%,
+      hsl(var(--background) / 0.82) 70%,
+      hsl(var(--background)) 100%
+    );
   }
 
   .tabular {
@@ -158,7 +145,14 @@
   }
 }
 
-/* Honor reduced-motion globally: collapse transitions/animations to near-instant. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: hsl(var(--card));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
