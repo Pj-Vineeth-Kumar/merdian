@@ -65,7 +65,7 @@ export function SearchBar({
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="relative">
-        <div className="glass flex items-center gap-2 rounded-full py-2 pl-3 pr-2 shadow-lift">
+        <div className="glass flex items-center gap-2 rounded-full py-2 pl-3 pr-2 shadow-lift transition-shadow focus-within:ring-2 focus-within:ring-ring/50 focus-within:ring-offset-2 focus-within:ring-offset-background">
           <span
             aria-hidden
             className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-cat-shopping text-primary-foreground"
@@ -82,7 +82,7 @@ export function SearchBar({
             maxLength={TRIP_INPUT.maxChars}
             aria-label="Describe your trip"
             placeholder="Try: a relaxed 4 days in Rome with great food"
-            className="min-w-0 flex-1 bg-transparent px-1 text-[15px] outline-none placeholder:text-muted-foreground/70"
+            className="min-w-0 flex-1 bg-transparent px-1 text-[15px] outline-none placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           />
 
           <button
@@ -159,7 +159,7 @@ export function SearchBar({
       </div>
 
       {variant === "hero" && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col items-center gap-3">
           <ExamplePrompts onPick={(prompt) => onValueChange(prompt)} />
           {faultDemoEnabled && (
             <FaultMenu
