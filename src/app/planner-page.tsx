@@ -12,7 +12,7 @@ import {
 } from "@/features/planner";
 
 import { PlanThread } from "./components/plan-thread";
-import { SidebarRail } from "./components/sidebar-rail";
+import { TopBar } from "./components/top-bar";
 import { useServerInfo } from "./use-server-info";
 
 // A real landscape photo from Lorem Picsum (stable id URL). Placeholder imagery:
@@ -60,10 +60,10 @@ export function PlannerPage() {
   const heroHeight = "34rem";
 
   return (
-    <div className="flex min-h-[100dvh]">
-      <SidebarRail onNewTrip={handleNewTrip} onHome={handleHome} active={isHome ? "home" : "plan"} />
+    <div className="relative min-h-[100dvh] overflow-x-hidden">
+      <TopBar onHome={handleHome} onNewTrip={handleNewTrip} showNewTrip={!isHome} />
 
-      <main className="relative min-w-0 flex-1 overflow-x-hidden">
+      <main className="relative">
         {/* Sticky photographic background. pointer-events-none so it never
             intercepts clicks; the content below is pulled up over it and its
             opaque sections cover it as the page scrolls. */}
@@ -109,14 +109,8 @@ export function PlannerPage() {
             <>
               {/* Slim greeting over the hero image (search bar is now the bottom
                   composer). */}
-              <div className="flex h-[15rem] flex-col items-center justify-end px-5 pb-7 text-center sm:h-[17rem]">
-                <span
-                  aria-hidden
-                  className="grid size-12 place-items-center rounded-full border-4 border-card bg-gradient-to-br from-primary to-cat-nightlife text-base font-semibold text-primary-foreground shadow-lift"
-                >
-                  MK
-                </span>
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
+              <div className="flex h-[15rem] flex-col items-center justify-end px-5 pb-8 text-center sm:h-[17rem]">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
                   Welcome to Meridian
                 </p>
               </div>
@@ -138,9 +132,9 @@ export function PlannerPage() {
           )}
         </div>
 
-        {/* The chat composer, pinned to the bottom (right of the rail). */}
+        {/* The chat composer, pinned to the bottom of the viewport. */}
         {!isHome && (
-          <div className="fixed bottom-0 left-16 right-0 z-30 glass border-t border-border">
+          <div className="fixed inset-x-0 bottom-0 z-30 glass border-t border-border">
             <div className="mx-auto max-w-3xl px-5 py-3">
               <SearchBar
                 value={searchValue}

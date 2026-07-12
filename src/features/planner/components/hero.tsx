@@ -11,14 +11,8 @@ interface HeroProps {
  */
 export function Hero({ children }: HeroProps) {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col items-center px-5 pb-10 pt-14 text-center sm:pt-20">
-      <span
-        aria-hidden
-        className="grid size-14 place-items-center rounded-full border-4 border-card bg-gradient-to-br from-primary to-cat-nightlife text-lg font-semibold text-primary-foreground shadow-lift"
-      >
-        MK
-      </span>
-      <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
+    <div className="mx-auto flex max-w-3xl flex-col items-center px-5 pb-10 pt-20 text-center sm:pt-24">
+      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
         Welcome to Meridian
       </p>
       <h1 className="mt-3 font-display text-4xl font-semibold leading-[1.02] tracking-tight text-balance sm:text-5xl">
