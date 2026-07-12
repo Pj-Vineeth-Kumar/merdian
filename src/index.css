@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Theme: "Nocturnal Atlas" — a warm charcoal canvas with a single locked marigold
+  accent, cartographic contour "isolines" in the background, and an expedition
+  type system (Bricolage Grotesque display / Hanken Grotesk body / DM Mono for
+  coordinates, times, and durations). Category hues are a muted map legend, not a
+  second brand color. All color flows through these tokens (light + dark parity).
+*/
+
+@layer base {
+  :root {
+    --background: 40 36% 96%;
+    --foreground: 26 28% 14%;
+
+    --card: 40 44% 99%;
+    --card-foreground: 26 28% 14%;
+
+    --popover: 40 44% 99%;
+    --popover-foreground: 26 28% 14%;
+
+    --primary: 30 92% 44%;
+    --primary-foreground: 40 44% 98%;
+
+    --muted: 38 24% 90%;
+    --muted-foreground: 30 10% 40%;
+
+    --destructive: 6 68% 46%;
+    --destructive-foreground: 40 44% 98%;
+
+    --border: 34 20% 83%;
+    --input: 34 20% 80%;
+    --ring: 30 92% 44%;
+
+    --cat-food: 14 62% 46%;
+    --cat-sight: 200 58% 40%;
+    --cat-outdoors: 152 46% 34%;
+    --cat-culture: 280 36% 48%;
+    --cat-nightlife: 330 52% 48%;
+    --cat-shopping: 38 74% 40%;
+    --cat-transport: 214 16% 42%;
+    --cat-stay: 252 40% 52%;
+    --cat-other: 30 10% 42%;
+
+    --radius: 0.85rem;
+  }
+
+  .dark {
+    --background: 24 18% 7%;
+    --foreground: 36 30% 92%;
+
+    --card: 26 16% 10%;
+    --card-foreground: 36 30% 92%;
+
+    --popover: 26 18% 9%;
+    --popover-foreground: 36 30% 92%;
+
+    --primary: 38 94% 58%;
+    --primary-foreground: 26 45% 10%;
+
+    --muted: 28 12% 16%;
+    --muted-foreground: 34 13% 64%;
+
+    --destructive: 8 74% 60%;
+    --destructive-foreground: 36 30% 96%;
+
+    --border: 30 12% 19%;
+    --input: 30 12% 17%;
+    --ring: 38 94% 58%;
+
+    --cat-food: 16 66% 62%;
+    --cat-sight: 199 56% 62%;
+    --cat-outdoors: 152 44% 54%;
+    --cat-culture: 280 42% 70%;
+    --cat-nightlife: 332 58% 68%;
+    --cat-shopping: 44 74% 62%;
+    --cat-transport: 210 16% 66%;
+    --cat-stay: 255 46% 72%;
+    --cat-other: 34 13% 64%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    min-height: 100dvh;
+    font-feature-settings: "ss01", "cv01";
+  }
+
+  /* Atmospheric background: warm horizon glow + cartographic contour isolines.
+     Fixed and non-interactive so it never affects scrolling performance. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        130% 90% at 85% -10%,
+        hsl(var(--primary) / 0.16),
+        transparent 55%
+      ),
+      radial-gradient(
+        90% 70% at 5% 105%,
+        hsl(210 40% 30% / 0.14),
+        transparent 60%
+      ),
+      repeating-radial-gradient(
+        circle at 82% 14%,
+        transparent 0 46px,
+        hsl(var(--foreground) / 0.022) 46px 47px
+      ),
+      repeating-radial-gradient(
+        circle at 12% 88%,
+        transparent 0 60px,
+        hsl(var(--foreground) / 0.018) 60px 61px
+      );
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
+  }
+
+  /* Consistent, visible focus everywhere. Never removed without replacement. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  /* The vertical "route rail" that threads through a day's stops, like a line on
+     a map. Rendered as a pseudo-element on the stop list. */
+  .route-rail {
+    position: relative;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* Honor reduced-motion globally: collapse transitions/animations to near-instant. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
