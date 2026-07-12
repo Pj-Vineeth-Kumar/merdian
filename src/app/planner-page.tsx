@@ -64,29 +64,30 @@ export function PlannerPage() {
       <TopBar onHome={handleHome} onNewTrip={handleNewTrip} showNewTrip={!isHome} />
 
       <main className="relative">
-        {/* Sticky photographic background. pointer-events-none so it never
-            intercepts clicks; the content below is pulled up over it and its
-            opaque sections cover it as the page scrolls. */}
-        <div
-          aria-hidden
-          className="pointer-events-none sticky top-0 z-0 overflow-hidden"
-          style={{ height: heroHeight }}
-        >
-          <div
-            className="h-full w-full bg-cover bg-center"
-            style={{ backgroundColor: "hsl(var(--muted))", backgroundImage: `url(${HERO_IMAGE})` }}
-            role="img"
-            aria-label="Scenic mountain landscape"
-          />
-          <div className="absolute inset-0 hero-scrim" />
-        </div>
+        {isHome ? (
+          <>
+            {/* Home: sticky hero image that fades into a solid page below. */}
+            <div
+              aria-hidden
+              className="pointer-events-none sticky top-0 z-0 overflow-hidden"
+              style={{ height: heroHeight }}
+            >
+              <div
+                className="h-full w-full bg-cover bg-center"
+                style={{
+                  backgroundColor: "hsl(var(--muted))",
+                  backgroundImage: `url(${HERO_IMAGE})`,
+                }}
+                role="img"
+                aria-label="Scenic mountain landscape"
+              />
+              <div className="absolute inset-0 hero-scrim" />
+            </div>
 
-        <div className="relative z-10" style={{ marginTop: `-${heroHeight}` }}>
-          {isHome ? (
-            <>
+            <div className="relative z-10" style={{ marginTop: `-${heroHeight}` }}>
               <Hero>
-                {/* Submitting from home immediately switches to the plan view, so
-                    the loading state is shown by the bottom composer, not here. */}
+                {/* Submitting from home switches to the plan view, so the loading
+                    state is shown by the bottom composer, not here. */}
                 <SearchBar
                   value={searchValue}
                   onValueChange={setSearchValue}
@@ -104,50 +105,58 @@ export function PlannerPage() {
                   <PopularDestinations onPick={handlePickDestination} />
                 </div>
               </div>
-            </>
-          ) : (
-            <>
-              {/* Slim greeting over the hero image (search bar is now the bottom
-                  composer). */}
-              <div className="flex h-[15rem] flex-col items-center justify-end px-5 pb-8 text-center sm:h-[17rem]">
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Plan view: the SAME hero image stays behind the whole conversation
+                (while generating and after), blended toward the page color so the
+                itinerary and text stay readable. Fixed = a calm parallax backdrop. */}
+            <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
+              <div
+                className="h-full w-full bg-cover bg-center"
+                style={{
+                  backgroundColor: "hsl(var(--muted))",
+                  backgroundImage: `url(${HERO_IMAGE})`,
+                }}
+              />
+              <div className="absolute inset-0 image-veil" />
+            </div>
+
+            <div className="relative z-10">
+              <div className="px-5 pb-6 pt-24 text-center">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
                   Welcome to Meridian
                 </p>
               </div>
-              {/* Scrollable generated content on a solid surface that covers the
-                  rest of the sticky hero image. pb clears the fixed composer. */}
-              <div className="min-h-[70vh] bg-background">
-                <div className="mx-auto max-w-3xl px-5 pb-44 pt-8">
-                  <StatusAnnouncer state={state} />
-                  <PlanThread
-                    state={state}
-                    dateRange={dateRange}
-                    onRetry={controller.retry}
-                    onReset={handleNewTrip}
-                    onEdit={save}
-                  />
-                </div>
+              <div className="mx-auto max-w-3xl px-5 pb-44">
+                <StatusAnnouncer state={state} />
+                <PlanThread
+                  state={state}
+                  dateRange={dateRange}
+                  onRetry={controller.retry}
+                  onReset={handleNewTrip}
+                  onEdit={save}
+                />
               </div>
-            </>
-          )}
-        </div>
-
-        {/* The chat composer, pinned to the bottom of the viewport. */}
-        {!isHome && (
-          <div className="fixed inset-x-0 bottom-0 z-30 glass border-t border-border">
-            <div className="mx-auto max-w-3xl px-5 py-3">
-              <SearchBar
-                value={searchValue}
-                onValueChange={setSearchValue}
-                onGenerate={controller.generate}
-                isLoading={state.kind === "loading"}
-                faultDemoEnabled={serverInfo.faultDemo}
-                dateRange={dateRange}
-                onDateRangeChange={setDateRange}
-                variant="composer"
-              />
             </div>
-          </div>
+
+            {/* The chat composer, pinned to the bottom of the viewport. */}
+            <div className="fixed inset-x-0 bottom-0 z-30 glass border-t border-border">
+              <div className="mx-auto max-w-3xl px-5 py-3">
+                <SearchBar
+                  value={searchValue}
+                  onValueChange={setSearchValue}
+                  onGenerate={controller.generate}
+                  isLoading={state.kind === "loading"}
+                  faultDemoEnabled={serverInfo.faultDemo}
+                  dateRange={dateRange}
+                  onDateRangeChange={setDateRange}
+                  variant="composer"
+                />
+              </div>
+            </div>
+          </>
         )}
       </main>
     </div>
