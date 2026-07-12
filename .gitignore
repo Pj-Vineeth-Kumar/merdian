@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+dist-ssr/
+
+# secrets — the LLM key must never be committed
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# assignment source & tooling (not part of the app)
+*.pdf
+skills-lock.json
+.agents/
+.claude/
+CLAUDE.md
