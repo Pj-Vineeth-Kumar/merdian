@@ -104,6 +104,18 @@ export function PlannerPage() {
                 </div>
               </div>
             </>
+          ) : state.kind === "loading" ? (
+            /* Generating: a calm, home-like screen — the trip shown over the hero
+               image, with the "Planning your trip" indicator down by the input. */
+            <div className="mx-auto flex max-w-2xl flex-col items-center px-5 pb-24 pt-24 text-center sm:pt-28">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
+                Your trip
+              </p>
+              <h1 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">
+                {state.prompt}
+              </h1>
+              <StatusAnnouncer state={state} />
+            </div>
           ) : (
             <>
               {/* Reveal the shared hero image at the top (no text); the plan renders
@@ -125,20 +137,33 @@ export function PlannerPage() {
           )}
         </div>
 
-        {/* The chat composer, pinned to the bottom of the viewport. */}
+        {/* The chat composer, pinned to the bottom of the viewport. The generating
+            indicator sits just above the input. */}
         {!isHome && (
           <div className="fixed inset-x-0 bottom-0 z-30 glass border-t border-border">
-            <div className="mx-auto max-w-3xl px-5 py-3">
-              <SearchBar
-                value={searchValue}
-                onValueChange={setSearchValue}
-                onGenerate={controller.generate}
-                isLoading={state.kind === "loading"}
-                faultDemoEnabled={serverInfo.faultDemo}
-                dateRange={dateRange}
-                onDateRangeChange={setDateRange}
-                variant="composer"
-              />
+            <div className="mx-auto max-w-3xl px-5">
+              {state.kind === "loading" && (
+                <div className="flex items-center gap-2 pt-3 text-sm text-muted-foreground">
+                  <span className="flex gap-1" aria-hidden>
+                    <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60" />
+                    <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60 [animation-delay:160ms]" />
+                    <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60 [animation-delay:320ms]" />
+                  </span>
+                  Planning your trip
+                </div>
+              )}
+              <div className="py-3">
+                <SearchBar
+                  value={searchValue}
+                  onValueChange={setSearchValue}
+                  onGenerate={controller.generate}
+                  isLoading={state.kind === "loading"}
+                  faultDemoEnabled={serverInfo.faultDemo}
+                  dateRange={dateRange}
+                  onDateRangeChange={setDateRange}
+                  variant="composer"
+                />
+              </div>
             </div>
           </div>
         )}

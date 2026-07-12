@@ -1,21 +1,15 @@
 import { CalendarDays, Compass } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 
 import type { DateRange } from "@shared/types";
 
-import {
-  EmptyResultState,
-  ErrorState,
-  ItinerarySkeleton,
-  ItineraryView,
-} from "@/features/itinerary";
+import { EmptyResultState, ErrorState, ItineraryView } from "@/features/itinerary";
 import type { ItineraryState, TripSession } from "@/features/planner";
 import { formatRangeLabel } from "@/lib/dates";
 
 interface PlanThreadProps {
-  /** Never "idle" — the page renders the home view in that case. */
-  state: Exclude<ItineraryState, { kind: "idle" }>;
+  /** Loading is handled by the page (a home-like screen); this renders results. */
+  state: Extract<ItineraryState, { kind: "error" | "ready" }>;
   dateRange: DateRange | null;
   onRetry: () => void;
   onReset: () => void;
@@ -23,9 +17,9 @@ interface PlanThreadProps {
 }
 
 /**
- * Renders a generation as a chat exchange: the user's request as a message, and
- * the plan as the assistant's reply. The reply is fully interactive structured
- * UI (never raw model text), with each place linking out to Google Maps.
+ * Renders a completed generation as a chat exchange: the user's request as a
+ * message, and the plan as the assistant's reply. The reply is fully interactive
+ * structured UI (never raw model text), with each place linking to Google Maps.
  */
 export function PlanThread({ state, dateRange, onRetry, onReset, onEdit }: PlanThreadProps) {
   return (
@@ -33,7 +27,6 @@ export function PlanThread({ state, dateRange, onRetry, onReset, onEdit }: PlanT
       <UserMessage prompt={state.prompt} dateRange={dateRange} />
 
       <AssistantMessage>
-        {state.kind === "loading" && <LoadingReply />}
         {state.kind === "error" && <ErrorState error={state.error} onRetry={onRetry} />}
         {state.kind === "ready" && isEmpty(state.itinerary.days) && (
           <EmptyResultState onRetry={onRetry} />
@@ -91,28 +84,6 @@ function AssistantMessage({ children }: { children: ReactNode }) {
         <Compass className="size-[18px]" />
       </span>
       <div className="min-w-0 flex-1 pt-1">{children}</div>
-    </div>
-  );
-}
-
-function LoadingReply() {
-  const reduce = useReducedMotion();
-  return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span className="flex gap-1" aria-hidden>
-          {[0, 1, 2].map((i) => (
-            <motion.span
-              key={i}
-              className="size-1.5 rounded-full bg-muted-foreground/60"
-              animate={reduce ? undefined : { y: [0, -4, 0] }}
-              transition={{ repeat: Infinity, duration: 0.9, delay: i * 0.15 }}
-            />
-          ))}
-        </span>
-        Planning your trip
-      </div>
-      <ItinerarySkeleton />
     </div>
   );
 }
