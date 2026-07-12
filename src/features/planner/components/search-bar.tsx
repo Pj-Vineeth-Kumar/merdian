@@ -24,6 +24,9 @@ interface SearchBarProps {
   dateRange: DateRange | null;
   onDateRangeChange: (range: DateRange | null) => void;
   autoFocus?: boolean;
+  /** "hero" shows examples below and opens the date popover downward; "composer"
+   *  is the compact sticky-bottom variant that opens the popover upward. */
+  variant?: "hero" | "composer";
 }
 
 export function SearchBar({
@@ -35,9 +38,11 @@ export function SearchBar({
   dateRange,
   onDateRangeChange,
   autoFocus,
+  variant = "hero",
 }: SearchBarProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const openUpward = variant === "composer";
 
   useEffect(() => {
     if (autoFocus) inputRef.current?.focus();
@@ -123,7 +128,12 @@ export function SearchBar({
               className="fixed inset-0 z-40 cursor-default"
               onClick={() => setPickerOpen(false)}
             />
-            <div className="absolute right-0 top-full z-50 mt-2">
+            <div
+              className={cn(
+                "absolute right-0 z-50",
+                openUpward ? "bottom-full mb-2" : "top-full mt-2",
+              )}
+            >
               <DateRangePicker
                 value={dateRange}
                 onApply={(range) => {
@@ -148,12 +158,16 @@ export function SearchBar({
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <ExamplePrompts onPick={(prompt) => onValueChange(prompt)} />
-        {faultDemoEnabled && (
-          <FaultMenu onTrigger={(fault) => onGenerate(value.trim() || FALLBACK_PROMPT, { fault, dateRange })} />
-        )}
-      </div>
+      {variant === "hero" && (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <ExamplePrompts onPick={(prompt) => onValueChange(prompt)} />
+          {faultDemoEnabled && (
+            <FaultMenu
+              onTrigger={(fault) => onGenerate(value.trim() || FALLBACK_PROMPT, { fault, dateRange })}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

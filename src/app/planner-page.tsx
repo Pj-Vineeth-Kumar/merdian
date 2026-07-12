@@ -56,7 +56,8 @@ export function PlannerPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const heroHeight = isHome ? "34rem" : "13rem";
+  // The hero image + gradient stay identical in both modes (same height/position).
+  const heroHeight = "34rem";
 
   return (
     <div className="flex min-h-[100dvh]">
@@ -81,36 +82,79 @@ export function PlannerPage() {
         </div>
 
         <div className="relative z-10" style={{ marginTop: `-${heroHeight}` }}>
-          <Hero compact={!isHome}>
-            <SearchBar
-              value={searchValue}
-              onValueChange={setSearchValue}
-              onGenerate={controller.generate}
-              isLoading={state.kind === "loading"}
-              faultDemoEnabled={serverInfo.faultDemo}
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
-              autoFocus={isHome}
-            />
-          </Hero>
-
-          <div className="min-h-[40vh] bg-background">
-            <div className="mx-auto max-w-5xl px-5 pb-24">
-              <StatusAnnouncer state={state} />
-              {isHome ? (
-                <PopularDestinations onPick={handlePickDestination} />
-              ) : (
-                <PlanThread
-                  state={state}
+          {isHome ? (
+            <>
+              <Hero>
+                {/* Submitting from home immediately switches to the plan view, so
+                    the loading state is shown by the bottom composer, not here. */}
+                <SearchBar
+                  value={searchValue}
+                  onValueChange={setSearchValue}
+                  onGenerate={controller.generate}
+                  isLoading={false}
+                  faultDemoEnabled={serverInfo.faultDemo}
                   dateRange={dateRange}
-                  onRetry={controller.retry}
-                  onReset={handleNewTrip}
-                  onEdit={save}
+                  onDateRangeChange={setDateRange}
+                  autoFocus
                 />
-              )}
+              </Hero>
+              <div className="min-h-[40vh] bg-background">
+                <div className="mx-auto max-w-5xl px-5 pb-24">
+                  <StatusAnnouncer state={state} />
+                  <PopularDestinations onPick={handlePickDestination} />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Slim greeting over the hero image (search bar is now the bottom
+                  composer). */}
+              <div className="flex h-[15rem] flex-col items-center justify-end px-5 pb-7 text-center sm:h-[17rem]">
+                <span
+                  aria-hidden
+                  className="grid size-12 place-items-center rounded-full border-4 border-card bg-gradient-to-br from-primary to-cat-nightlife text-base font-semibold text-primary-foreground shadow-lift"
+                >
+                  MK
+                </span>
+                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
+                  Welcome to Meridian
+                </p>
+              </div>
+              {/* Scrollable generated content on a solid surface that covers the
+                  rest of the sticky hero image. pb clears the fixed composer. */}
+              <div className="min-h-[70vh] bg-background">
+                <div className="mx-auto max-w-3xl px-5 pb-44 pt-8">
+                  <StatusAnnouncer state={state} />
+                  <PlanThread
+                    state={state}
+                    dateRange={dateRange}
+                    onRetry={controller.retry}
+                    onReset={handleNewTrip}
+                    onEdit={save}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* The chat composer, pinned to the bottom (right of the rail). */}
+        {!isHome && (
+          <div className="fixed bottom-0 left-16 right-0 z-30 glass border-t border-border">
+            <div className="mx-auto max-w-3xl px-5 py-3">
+              <SearchBar
+                value={searchValue}
+                onValueChange={setSearchValue}
+                onGenerate={controller.generate}
+                isLoading={state.kind === "loading"}
+                faultDemoEnabled={serverInfo.faultDemo}
+                dateRange={dateRange}
+                onDateRangeChange={setDateRange}
+                variant="composer"
+              />
             </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
