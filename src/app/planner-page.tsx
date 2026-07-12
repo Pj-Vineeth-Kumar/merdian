@@ -137,33 +137,31 @@ export function PlannerPage() {
           )}
         </div>
 
-        {/* The chat composer, pinned to the bottom of the viewport. The generating
-            indicator sits just above the input. */}
+        {/* Floating input + generating indicator (no bottom container bar). The
+            wrapper is click-through; only the pills themselves are interactive. */}
         {!isHome && (
-          <div className="fixed inset-x-0 bottom-0 z-30 glass border-t border-border">
-            <div className="mx-auto max-w-3xl px-5">
-              {state.kind === "loading" && (
-                <div className="flex items-center gap-2 pt-3 text-sm text-muted-foreground">
-                  <span className="flex gap-1" aria-hidden>
-                    <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60" />
-                    <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60 [animation-delay:160ms]" />
-                    <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60 [animation-delay:320ms]" />
-                  </span>
-                  Planning your trip
-                </div>
-              )}
-              <div className="py-3">
-                <SearchBar
-                  value={searchValue}
-                  onValueChange={setSearchValue}
-                  onGenerate={controller.generate}
-                  isLoading={state.kind === "loading"}
-                  faultDemoEnabled={serverInfo.faultDemo}
-                  dateRange={dateRange}
-                  onDateRangeChange={setDateRange}
-                  variant="composer"
-                />
+          <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex flex-col items-center gap-2 px-4 pb-5">
+            {state.kind === "loading" && (
+              <div className="glass pointer-events-auto flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted-foreground shadow-lift">
+                <span className="flex gap-1" aria-hidden>
+                  <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60" />
+                  <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60 [animation-delay:160ms]" />
+                  <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60 [animation-delay:320ms]" />
+                </span>
+                Planning your trip
               </div>
+            )}
+            <div className="pointer-events-auto w-full max-w-2xl">
+              <SearchBar
+                value={searchValue}
+                onValueChange={setSearchValue}
+                onGenerate={controller.generate}
+                isLoading={state.kind === "loading"}
+                faultDemoEnabled={serverInfo.faultDemo}
+                dateRange={dateRange}
+                onDateRangeChange={setDateRange}
+                variant="composer"
+              />
             </div>
           </div>
         )}
