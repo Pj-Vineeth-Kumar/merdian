@@ -131,18 +131,6 @@
     );
   }
 
-  /* A uniform-ish white (theme-aware) blend over a full-viewport image, used as
-     the plan-view backdrop so the photo stays visible behind the itinerary while
-     text/cards remain readable. Never fully opaque — the image always shows. */
-  .image-veil {
-    background: linear-gradient(
-      to bottom,
-      hsl(var(--background) / 0.4) 0%,
-      hsl(var(--background) / 0.68) 30%,
-      hsl(var(--background) / 0.8) 100%
-    );
-  }
-
   .tabular {
     font-variant-numeric: tabular-nums;
   }

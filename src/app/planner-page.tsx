@@ -64,27 +64,25 @@ export function PlannerPage() {
       <TopBar onHome={handleHome} onNewTrip={handleNewTrip} showNewTrip={!isHome} />
 
       <main className="relative">
-        {isHome ? (
-          <>
-            {/* Home: sticky hero image that fades into a solid page below. */}
-            <div
-              aria-hidden
-              className="pointer-events-none sticky top-0 z-0 overflow-hidden"
-              style={{ height: heroHeight }}
-            >
-              <div
-                className="h-full w-full bg-cover bg-center"
-                style={{
-                  backgroundColor: "hsl(var(--muted))",
-                  backgroundImage: `url(${HERO_IMAGE})`,
-                }}
-                role="img"
-                aria-label="Scenic mountain landscape"
-              />
-              <div className="absolute inset-0 hero-scrim" />
-            </div>
+        {/* Shared photographic background — identical for the home and plan views:
+            a sticky hero image that fades into the solid page below. */}
+        <div
+          aria-hidden
+          className="pointer-events-none sticky top-0 z-0 overflow-hidden"
+          style={{ height: heroHeight }}
+        >
+          <div
+            className="h-full w-full bg-cover bg-center"
+            style={{ backgroundColor: "hsl(var(--muted))", backgroundImage: `url(${HERO_IMAGE})` }}
+            role="img"
+            aria-label="Scenic mountain landscape"
+          />
+          <div className="absolute inset-0 hero-scrim" />
+        </div>
 
-            <div className="relative z-10" style={{ marginTop: `-${heroHeight}` }}>
+        <div className="relative z-10" style={{ marginTop: `-${heroHeight}` }}>
+          {isHome ? (
+            <>
               <Hero>
                 {/* Submitting from home switches to the plan view, so the loading
                     state is shown by the bottom composer, not here. */}
@@ -105,58 +103,44 @@ export function PlannerPage() {
                   <PopularDestinations onPick={handlePickDestination} />
                 </div>
               </div>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Plan view: the SAME hero image stays behind the whole conversation
-                (while generating and after), blended toward the page color so the
-                itinerary and text stay readable. Fixed = a calm parallax backdrop. */}
-            <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
-              <div
-                className="h-full w-full bg-cover bg-center"
-                style={{
-                  backgroundColor: "hsl(var(--muted))",
-                  backgroundImage: `url(${HERO_IMAGE})`,
-                }}
+            </>
+          ) : (
+            <>
+              {/* Reveal the shared hero image at the top (no text); the plan renders
+                  on the solid page below it, with the input moved to the bottom. */}
+              <div className="h-[13rem] sm:h-[15rem]" />
+              <div className="min-h-[70vh] bg-background">
+                <div className="mx-auto max-w-3xl px-5 pb-44 pt-8">
+                  <StatusAnnouncer state={state} />
+                  <PlanThread
+                    state={state}
+                    dateRange={dateRange}
+                    onRetry={controller.retry}
+                    onReset={handleNewTrip}
+                    onEdit={save}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* The chat composer, pinned to the bottom of the viewport. */}
+        {!isHome && (
+          <div className="fixed inset-x-0 bottom-0 z-30 glass border-t border-border">
+            <div className="mx-auto max-w-3xl px-5 py-3">
+              <SearchBar
+                value={searchValue}
+                onValueChange={setSearchValue}
+                onGenerate={controller.generate}
+                isLoading={state.kind === "loading"}
+                faultDemoEnabled={serverInfo.faultDemo}
+                dateRange={dateRange}
+                onDateRangeChange={setDateRange}
+                variant="composer"
               />
-              <div className="absolute inset-0 image-veil" />
             </div>
-
-            <div className="relative z-10">
-              <div className="px-5 pb-6 pt-24 text-center">
-                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70">
-                  Welcome to Meridian
-                </p>
-              </div>
-              <div className="mx-auto max-w-3xl px-5 pb-44">
-                <StatusAnnouncer state={state} />
-                <PlanThread
-                  state={state}
-                  dateRange={dateRange}
-                  onRetry={controller.retry}
-                  onReset={handleNewTrip}
-                  onEdit={save}
-                />
-              </div>
-            </div>
-
-            {/* The chat composer, pinned to the bottom of the viewport. */}
-            <div className="fixed inset-x-0 bottom-0 z-30 glass border-t border-border">
-              <div className="mx-auto max-w-3xl px-5 py-3">
-                <SearchBar
-                  value={searchValue}
-                  onValueChange={setSearchValue}
-                  onGenerate={controller.generate}
-                  isLoading={state.kind === "loading"}
-                  faultDemoEnabled={serverInfo.faultDemo}
-                  dateRange={dateRange}
-                  onDateRangeChange={setDateRange}
-                  variant="composer"
-                />
-              </div>
-            </div>
-          </>
+          </div>
         )}
       </main>
     </div>
