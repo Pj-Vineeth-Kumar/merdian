@@ -87,7 +87,12 @@ export function createGeminiProvider(apiKey: string, model: string): LlmProvider
               responseMimeType: "application/json",
               responseSchema,
               temperature: 0.7,
-              maxOutputTokens: 4096,
+              // gemini-2.5-flash "thinking" tokens count against maxOutputTokens.
+              // With a small budget, thinking + a full itinerary overflowed and
+              // the JSON was truncated (finishReason MAX_TOKENS) -> invalid_json.
+              // Disable thinking and give the JSON plenty of room so it completes.
+              maxOutputTokens: 8192,
+              thinkingConfig: { thinkingBudget: 0 },
             },
           }),
         });
