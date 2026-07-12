@@ -56,8 +56,10 @@ export function PlannerPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // The hero image + gradient stay identical in both modes (same height/position).
-  const heroHeight = "34rem";
+  // Home shows the tall hero; the plan view uses a shorter hero so the scrim fully
+  // fades to the page color exactly where the content begins (no hard "rectangle"
+  // edge — the image blends into the page the same way it does on home).
+  const heroHeight = isHome ? "34rem" : "22rem";
 
   return (
     <div className="relative min-h-[100dvh] overflow-x-hidden">
@@ -118,9 +120,10 @@ export function PlannerPage() {
             </div>
           ) : (
             <>
-              {/* Reveal the shared hero image at the top (no text); the plan renders
-                  on the solid page below it, with the input moved to the bottom. */}
-              <div className="h-[13rem] sm:h-[15rem]" />
+              {/* Reveal the hero image over its full (short) height so the scrim
+                  reaches the page color exactly where this block starts — the
+                  content then continues seamlessly, with no hard rectangle edge. */}
+              <div style={{ height: heroHeight }} />
               <div className="min-h-[70vh] bg-background">
                 <div className="mx-auto max-w-3xl px-5 pb-44 pt-8">
                   <StatusAnnouncer state={state} />
